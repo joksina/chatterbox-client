@@ -1,24 +1,27 @@
 // // YOUR CODE HERE:
-var app = {};
+var room = "lobby";
+var app = {
+  server: 'https://api.parse.com/1/classes/chatterbox'
+}
 app.init = function () {
 }
-app.send = function (){
+app.send = function (message){
   $.ajax({
 //   // This is the url you should use to communicate with the parse API server.
-url: 'https://api.parse.com/1/classes/chatterbox',
-type: 'POST',
-data: JSON.stringify(message),
-contentType: 'application/json',
-success: function (data) {
-  console.log('chatterbox: Message sent', data);
-},
-error: function (data) {
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'POST',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
     // See: https://developer.mozilla.org/en-US/docs/Web/API/console.error
-    console.error('chatterbox: Failed to send message');
-  }
-});
+      console.error('chatterbox: Failed to send message');
+    }
+  });
 }
-app.fetch = function (){
+app.fetch = function (message){
     // This is the url you should use to communicate with the parse API server.
     $.ajax({
       url: 'https://api.parse.com/1/classes/chatterbox',
@@ -27,7 +30,7 @@ app.fetch = function (){
       contentType: 'application/json',
       success: function (data) {
 
-        console.log('chatterbox: Message Recieved', data);
+        console.log('chatterbox: Message Recieved');
       },
       error: function (data) {
     // Sees: https://developer.mozilla.org/en-US/docs/Web/API/console.error
@@ -36,14 +39,25 @@ app.fetch = function (){
 });
 
   }
+
   app.clearMessages = function (){
-
+    $('#chats').html("");
+    $('#chats').children = [];
   }
-  app.addMessage = function (){
-
+  // children.prototype.push = function(array){
+  //   array[array.length] = th
+  // }
+  app.addMessage = function (message){
+    $('#chats').append('<div>'+message.text+'</div>');
   }
   app.addRoom = function (){
+        // $.ajax({
+    //   url: 'https://api.parse.com/1/classes/chatterbox',
+    //   type: '',
+    //   data: JSON.stringify(message),
+    //   contentType: 'application/json',
 
+    // })
   }
 // var message = {
 //   username: 'anonlife',
