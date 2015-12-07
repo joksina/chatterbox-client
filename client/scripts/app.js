@@ -48,16 +48,10 @@ app.fetch = function (message){
   //   array[array.length] = th
   // }
   app.addMessage = function (message){
-    $('#chats').append('<div>'+message.text+'</div>');
+    $('#chats').append('<div>'+message+'</div>');
   }
-  app.addRoom = function (){
-        // $.ajax({
-    //   url: 'https://api.parse.com/1/classes/chatterbox',
-    //   type: '',
-    //   data: JSON.stringify(message),
-    //   contentType: 'application/json',
-
-    // })
+  app.addRoom = function (roomName){
+    $('#roomSelect').append('<option>'+ roomName + '</option>');
   }
 // var message = {
 //   username: 'anonlife',
