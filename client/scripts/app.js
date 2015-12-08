@@ -27,11 +27,17 @@ app.fetch = function (message){
     data: JSON.stringify(message),
     contentType: 'application/json',
     success: function (data) {
-
-      console.log('chatterbox: Message Recieved');
+console.log(data)
+// var recentMsgs = app.fetch();
+      // console.log(recentMsgs)
+      $('#chats').html("")
+      _.each(data.results, function (val){
+        app.addMessage(val)
+      // console.log( val.username,val.text);
+      })
     },
     error: function (data) {
-    console.error('chatterbox: Failed to send message');
+      console.error('chatterbox: Failed to send message');
     }
   });
 };
@@ -42,13 +48,13 @@ app.clearMessages = function (){
 };
 
 app.addMessage = function (message){
-  var escape = ['<', '>', '(', ')']
+  var escape = ['<', '>', '(', ')'] 
   for (var i = 0; i < escape.length; i++) {
     if(message.text.indexOf(escape[i]) !== -1){
       return false;
     }
   }
-  $('#chats').append('<div> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
+  $('#chats').append('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
 };
 
 app.addRoom = function (roomName){
@@ -61,34 +67,36 @@ app.addFriend = function(user, newFriend) {
   // friends[user] = user;
   // $('#chats').find('.' + user).addClass('friend')
 }
-
-  var url = window.location.href;
 $(document).ready(function() {
+  var url = window.location.href;
   var users = [];
   var user = url.indexOf('username') + 9;
   var sl = url.slice(user, url.length);
   var userObj;
-  if(users.indexOf(sl) === -1){
-    userObj = {name: sl, friends: []}
-    users.push(userObj)
-  }
-  console.log(users)
-$( ".submit" ).submit(function( event ) {
-  alert( "Handler for .submit() called." );
-  window.location.href = url
-    app.addMessage({username: "hi", text: $('#newMessage').val()})
-  event.preventDefault();
-});
+    if(users.indexOf(sl) === -1){
+      userObj = {name: sl, friends: []}
+      users.push(userObj)
+    }
+  // console.log(users)
+  $( ".submit" ).click(function( event ) {
+    // alert( "Handler for .submit() called." );
+    // window.location.href = url
+    app.send({username: userObj.name, text: $('#newMessage').val()})
+    // app.addMessage({username: userObj.name, text: $('#newMessage').val()})
+    // event.preventDefault();
+  });
   // $('#submit').click(function (){
       // console.log(())
   $(document).on('click','.userName',function(){
-    app.addFriend(userObj, $(this).text())
+        app.addFriend(userObj, $(this).text())
     // console.log($(this).text())
     // code here
-});
+  });
   // $(".userName").click(function (){
     // _.filter()
     // app.clearMessages()
 
   // })
+app.fetch()
+
 })
