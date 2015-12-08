@@ -53,6 +53,8 @@ $(document).ready(function() {
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
+       // if($('#roomSelect') === data)
+          //console.log($('#roomSelect').val())
         $('#chats').html("")
         _.each(data.results, function (val){
           app.addMessage(val)
@@ -74,15 +76,18 @@ $(document).ready(function() {
     var escape = ['<', '>', '(', ')'] 
 
     for (var i = 0; i < escape.length; i++) {
-      if(message.text.indexOf(escape[i]) !== -1){
-        return false;
-      }
-    }
+       if(message.text){
+        if(message.text.indexOf(escape[i]) !== -1){
 
+          return false;
+         }
+       }
+
+    }
     if(whoIam === "me"){
-        $('#chats').prepend('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');    
+        $('#chats').append('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');    
     } else{
-    $('#chats').append('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
+    $('#chats').prepend('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
     }
 
   };
