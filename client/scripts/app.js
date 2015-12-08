@@ -1,5 +1,5 @@
 var app = {}
-
+var allRooms = true;
 $(document).ready(function() {
   var url = window.location.href;
   var users = [];
@@ -25,79 +25,102 @@ $(document).ready(function() {
     // app.clearMessages()
 
   // })
-  var room = "lobby";
-  var friends = {};
+var room = "lobby";
+var friends = {};
 
-  app.init = function () {
-  }
+app.init = function () {
+}
 
-  app.send = function (message){
-    $.ajax({
-      url: 'https://api.parse.com/1/classes/chatterbox',
-      type: 'POST',
-      data: JSON.stringify(message),
-      contentType: 'application/json',
-      success: function (data) {
-        console.log('chatterbox: Message sent');
-      },
-      error: function (data) {
-        console.error('chatterbox: Failed to send message');
-      }
-    });
-  }
+app.send = function (message){
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'POST',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      console.log('chatterbox: Message sent');
+    },
+    error: function (data) {
+      console.error('chatterbox: Failed to send message');
+    }
+  });
+}
 
-  app.fetch = function (message){
-    $.ajax({
-      url: 'https://api.parse.com/1/classes/chatterbox',
-      type: 'GET',
-      data: JSON.stringify(message),
-      contentType: 'application/json',
-      success: function (data) {
+app.fetch = function (message){
+  $.ajax({
+    url: 'https://api.parse.com/1/classes/chatterbox',
+    type: 'GET',
+    data: JSON.stringify(message),
+    contentType: 'application/json',
+    success: function (data) {
+      var lobbyRoom;
        // if($('#roomSelect') === data)
-          //console.log($('#roomSelect').val())
-        $('#chats').html("")
-        _.each(data.results, function (val){
-          app.addMessage(val)
-        })
-        console.log('chatterbox: Message sent');
-      },
-      error: function (data) {
-        console.error('chatterbox: Failed to send message');
+       if(allRooms){
+        lobbyRoom = data.results;
+      } else{
+       lobbyRoom  = _.filter(data.results, function(value){
+        // console.log(value.roomname)
+        return $('#roomSelect').val() === value.roomname;
+
+      });
+
+     }
+
+     $('#chats').html("")
+     _.each(lobbyRoom, function (val){
+      // console.log(userObj.friends.indexOf(val.username))
+      // console.log("userfriends: ",userObj.friends, "username", val.username)
+      if(userObj.friends.indexOf(val.username) !== -1){
+        // console.log("found a friend")
+      app.addMessage(val, true)
       }
-    });
-  };
+      else{
+       app.addMessage(val, false)
+      }
+    })
+     console.log('chatterbox: Message sent');
+   },
+   error: function (data) {
+    console.error('chatterbox: Failed to send message');
+  }
+});
+};
 
-  app.clearMessages = function (){
-    $('#chats').html("");
-    $('#chats').children = [];
-  };
+app.clearMessages = function (){
+  $('#chats').html("");
+  $('#chats').children = [];
+};
 
-  app.addMessage = function (message, whoIam){
-    var escape = ['<', '>', '(', ')'] 
+app.addMessage = function (message, friend){
+  var escape = ['<', '>', '(', ')'] 
 
-    for (var i = 0; i < escape.length; i++) {
-       if(message.text){
-        if(message.text.indexOf(escape[i]) !== -1){
+  for (var i = 0; i < escape.length; i++) {
+   if(message.text){
+    if(message.text.indexOf(escape[i]) !== -1){
 
-          return false;
-         }
-       }
-
+      return false;
     }
-    if(whoIam === "me"){
-        $('#chats').append('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');    
-    } else{
-    $('#chats').prepend('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
-    }
+  }
 
-  };
+}
+if(friend){
+  $('#chats').prepend('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName friend">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
+}
+else{
+  $('#chats').prepend('<div> <span class = "time">' +message.createdAt+' </span> <span class = "userName">'+message.username+'</span>'+": "+'<span class = "message">'+message.text+'</span> </div>');
+}
 
-  app.addRoom = function (roomName){
-    $('#roomSelect').append('<option>'+ roomName + '</option>');
-  };
+};
 
-  app.addFriend = function(user, newFriend) {
-    user.friends.push(newFriend);
+app.addRoom = function (roomName){
+  $('#roomSelect').append('<option>'+ roomName + '</option>');
+};
+
+app.addFriend = function(user, newFriend) {
+  if(user.friends.indexOf(newFriend) === -1){
+
+  user.friends.push(newFriend);
+  }
     // friends[user] = user;
     // $('#chats').find('.' + user).addClass('friend')
   }
