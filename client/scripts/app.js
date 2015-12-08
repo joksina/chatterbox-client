@@ -42,7 +42,7 @@ app.clearMessages = function (){
 };
 
 app.addMessage = function (message){
-  var escape = ['<', '>']
+  var escape = ['<', '>', '(', ')']
   for (var i = 0; i < escape.length; i++) {
     if(message.text.indexOf(escape[i]) !== -1){
       return false;
@@ -56,21 +56,33 @@ app.addRoom = function (roomName){
 };
 
 app.addFriend = function(user, newFriend) {
-  friends[user] = user;
-  $('#chats').find('.' + user).addClass('friend')
+  console.log(user)
+  user.friends.push(newFriend);
+  // friends[user] = user;
+  // $('#chats').find('.' + user).addClass('friend')
 }
 
-$(document).ready(function() {
   var url = window.location.href;
-  var users = url.indexOf('username') + 9;
-  var sl = url.slice(users, url.length);
-  
-  $('#submit').click(function (){
+$(document).ready(function() {
+  var users = [];
+  var user = url.indexOf('username') + 9;
+  var sl = url.slice(user, url.length);
+  var userObj;
+  if(users.indexOf(sl) === -1){
+    userObj = {name: sl, friends: []}
+    users.push(userObj)
+  }
+  console.log(users)
+$( ".submit" ).submit(function( event ) {
+  alert( "Handler for .submit() called." );
+  window.location.href = url
     app.addMessage({username: "hi", text: $('#newMessage').val()})
+  event.preventDefault();
+});
+  // $('#submit').click(function (){
       // console.log(())
-  });
   $(document).on('click','.userName',function(){
-    app.addFriend(sl, $(this).text())
+    app.addFriend(userObj, $(this).text())
     // console.log($(this).text())
     // code here
 });
