@@ -41,7 +41,13 @@ app.clearMessages = function (){
 };
 
 app.addMessage = function (message){
-  $('#chats').append('<div> <span class = "userName">'+message.username+': </span>'+'<span class = "message">'+message.text+'</span> </div>');
+  console.log(window.location.href)
+  var escape = ['<', '>']
+  for (var i = 0; i < escape.length; i++) {
+    if(message.text.indexOf(escape[i]) === -1){
+      $('#chats').append('<div> <span class = "userName">'+message.username+': </span>'+'<span class = "message">'+message.text+'</span> </div>');
+    }
+  }
 };
 
 app.addRoom = function (roomName){
